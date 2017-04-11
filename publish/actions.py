@@ -5,7 +5,7 @@ from django.contrib.admin.utils import quote, model_ngettext, get_deleted_object
 from django.db import router
 from django.shortcuts import render_to_response
 from django.template.response import TemplateResponse
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
 from django.utils.text import capfirst
@@ -43,7 +43,7 @@ undelete_selected.short_description = "Un-mark %(verbose_name_plural)s for delet
 def _get_publishable_html(admin_site, levels_to_root, value):
     model = value.__class__
     model_name = escape(capfirst(model._meta.verbose_name))
-    model_title = escape(force_unicode(value))
+    model_title = escape(force_text(value))
     model_text = '%s: %s' % (model_name, model_title)
     opts = model._meta
 
@@ -127,7 +127,7 @@ def publish_selected(modeladmin, request, queryset):
 
     context = {
         "title": _("Publish?"),
-        "object_name": force_unicode(opts.verbose_name),
+        "object_name": force_text(opts.verbose_name),
         "all_published": _convert_all_published_to_html(admin_site, all_published),
         "perms_lacking": _to_html(admin_site, perms_needed),
         'queryset': queryset,
@@ -184,9 +184,9 @@ def unpublish_selected(modeladmin, request, queryset):
             return None
 
     if len(all_unpublished) == 1:
-        objects_name = force_unicode(opts.verbose_name)
+        objects_name = force_text(opts.verbose_name)
     else:
-        objects_name = force_unicode(opts.verbose_name_plural)
+        objects_name = force_text(opts.verbose_name_plural)
 
     if perms_needed or protected:
         title = _("Cannot unpublish %(name)s") % {"name": objects_name}
