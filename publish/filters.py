@@ -1,4 +1,4 @@
-from django.utils.encoding import smart_unicode
+from django.utils.encoding import smart_text
 
 from .models import Publishable
 
@@ -8,8 +8,9 @@ try:
 except ImportError:
     # only using this code if on before Django 1.4
     from django.contrib.admin.filterspecs import FilterSpec, RelatedFilterSpec as RelatedFieldListFilter
-    
+
     class FieldListFilter(object):
+
         @classmethod
         def register(cls, test, list_filter_class, take_priority=False):
             if take_priority:
@@ -23,18 +24,18 @@ def is_publishable_filter(f):
 
 
 class PublishableRelatedFieldListFilter(RelatedFieldListFilter):
+
     def __init__(self, field, request, params, model, model_admin, *arg, **kw):
         super(PublishableRelatedFieldListFilter, self).__init__(field, request, params, model, model_admin, *arg, **kw)
         # to keep things simple we'll just remove all "non-draft" instance from list
         rel_model = field.rel.to
         queryset = rel_model._default_manager.complex_filter(field.rel.limit_choices_to).draft_and_deleted()
         if hasattr(field.rel, 'get_related_field'):
-            lst = [(getattr(x, field.rel.get_related_field().attname), smart_unicode(x)) for x in queryset]
+            lst = [(getattr(x, field.rel.get_related_field().attname), smart_text(x)) for x in queryset]
         else:
-            lst = [(x._get_pk_val(), smart_unicode(x)) for x in queryset]
+            lst = [(x._get_pk_val(), smart_text(x)) for x in queryset]
         self.lookup_choices = lst
 
 
 def register_filters():
     FieldListFilter.register(is_publishable_filter, PublishableRelatedFieldListFilter, take_priority=True)
-
