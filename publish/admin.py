@@ -58,7 +58,7 @@ def attach_filtered_formfields(admin_class):
 class PublishableAdmin(admin.ModelAdmin):
 
     actions = [publish_selected, unpublish_selected, delete_selected, undelete_selected]
-    change_form_template = 'admin/publish_change_form.html'
+    change_form_template = 'publish_change_form.html'
     publish_confirmation_template = None
     unpublish_confirmation_template = None
     deleted_form_template = None
